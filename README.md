@@ -89,13 +89,13 @@ FROM user_page_views;
 ```
 
 ### 5. Impprtant Notes
-NOT
+todo
 
 ## API Reference
-
+todo
 
 ## Technique
-
+todo
 
 ## Contributing
 Issues and Pull Requests are welcome! 
