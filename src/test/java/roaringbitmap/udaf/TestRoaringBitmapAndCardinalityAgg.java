@@ -9,7 +9,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.junit.Test;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
 import static org.junit.Assert.*;
@@ -31,9 +31,9 @@ public class TestRoaringBitmapAndCardinalityAgg {
         eval1.init(GenericUDAFEvaluator.Mode.PARTIAL1,arguments1);
         // partial1
         // test iterate, terminatePartial
-        Roaring64Bitmap bitmap_a1=new Roaring64Bitmap();
-        Roaring64Bitmap bitmap_a2=new Roaring64Bitmap();
-        Roaring64Bitmap bitmap_a3=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap_a1=new Roaring64NavigableMap();
+        Roaring64NavigableMap bitmap_a2=new Roaring64NavigableMap();
+        Roaring64NavigableMap bitmap_a3=new Roaring64NavigableMap();
         bitmap_a1.addRange(1L,30L);
         bitmap_a2.addRange(10L,40L);
         bitmap_a3.addRange(10L,20L);
@@ -48,8 +48,8 @@ public class TestRoaringBitmapAndCardinalityAgg {
 
         Object partialResult1=eval1.terminatePartial(buffer1);
         assertNotNull(partialResult1);
-        Roaring64Bitmap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
-        Roaring64Bitmap expectedBitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
+        Roaring64NavigableMap expectedBitmap1=new Roaring64NavigableMap();
         expectedBitmap1.addRange(10L,20L);
         assertEquals(expectedBitmap1,partialBitmap1);
         // part2
@@ -64,8 +64,8 @@ public class TestRoaringBitmapAndCardinalityAgg {
 
         // partial2
         // test iterate, terminatePartial
-        Roaring64Bitmap bitmap_b1=new Roaring64Bitmap();
-        Roaring64Bitmap bitmap_b2=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap_b1=new Roaring64NavigableMap();
+        Roaring64NavigableMap bitmap_b2=new Roaring64NavigableMap();
         bitmap_b1.addRange(15L,25L);
         bitmap_b2.addRange(18L,30L);
 
@@ -77,8 +77,8 @@ public class TestRoaringBitmapAndCardinalityAgg {
 
         Object partialResult2=eval2.terminatePartial(buffer2);
         assertNotNull(partialResult2);
-        Roaring64Bitmap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
-        Roaring64Bitmap expectedBitmap2=new Roaring64Bitmap();
+        Roaring64NavigableMap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
+        Roaring64NavigableMap expectedBitmap2=new Roaring64NavigableMap();
         expectedBitmap2.addRange(18L,25L);
         assertEquals(expectedBitmap2,partialBitmap2);
 
@@ -118,8 +118,8 @@ public class TestRoaringBitmapAndCardinalityAgg {
         eval1.init(GenericUDAFEvaluator.Mode.PARTIAL1,arguments1);
         // partial1
         // test iterate, terminatePartial
-        Roaring64Bitmap bitmap_a1=new Roaring64Bitmap();
-        Roaring64Bitmap bitmap_a2=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap_a1=new Roaring64NavigableMap();
+        Roaring64NavigableMap bitmap_a2=new Roaring64NavigableMap();
         bitmap_a1.addRange(1L,30L);
         bitmap_a2.addRange(10L,40L);
 
@@ -131,8 +131,8 @@ public class TestRoaringBitmapAndCardinalityAgg {
 
         Object partialResult1=eval1.terminatePartial(buffer1);
         assertNotNull(partialResult1);
-        Roaring64Bitmap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
-        Roaring64Bitmap expectedBitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
+        Roaring64NavigableMap expectedBitmap1=new Roaring64NavigableMap();
         expectedBitmap1.addRange(10L,30L);
         assertEquals(expectedBitmap1,partialBitmap1);
 
@@ -148,7 +148,7 @@ public class TestRoaringBitmapAndCardinalityAgg {
 
         // partial2
         // test iterate, terminatePartial
-        Roaring64Bitmap bitmap_b1=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap_b1=new Roaring64NavigableMap();
         bitmap_b1.addRange(40L,50L);
         BytesWritable input_b1= RoaringBitmapSerializer.serialize(bitmap_b1);
         eval2.iterate(buffer2,new Object[]{null});
@@ -156,8 +156,8 @@ public class TestRoaringBitmapAndCardinalityAgg {
 
         Object partialResult2=eval2.terminatePartial(buffer2);
         assertNotNull(partialResult2);
-        Roaring64Bitmap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
-        Roaring64Bitmap expectedBitmap2=new Roaring64Bitmap();
+        Roaring64NavigableMap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
+        Roaring64NavigableMap expectedBitmap2=new Roaring64NavigableMap();
         expectedBitmap2.addRange(40L,50L);
         assertEquals(expectedBitmap2,partialBitmap2);
 

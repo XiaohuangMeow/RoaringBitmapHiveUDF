@@ -8,7 +8,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.io.BytesWritable;
 import org.junit.Test;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
 import java.util.Arrays;
@@ -53,8 +53,8 @@ public class TestRoaringBitmapBuild {
 
         BytesWritable output=(BytesWritable) udf.evaluate(args);
 
-        Roaring64Bitmap outputBitmap= RoaringBitmapSerializer.deserialize(output);
-        Roaring64Bitmap expectedBitmap=new Roaring64Bitmap();
+        Roaring64NavigableMap outputBitmap= RoaringBitmapSerializer.deserialize(output);
+        Roaring64NavigableMap expectedBitmap=new Roaring64NavigableMap();
 
         expectedBitmap.addRange(1L,4L);
         assertEquals(expectedBitmap,outputBitmap);

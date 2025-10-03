@@ -7,7 +7,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.io.LongWritable;
 import org.junit.Test;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
 import static org.junit.Assert.assertEquals;
@@ -39,7 +39,7 @@ public class TestRoaringBitmapMinimum {
         ObjectInspector[] arguments={arg1OI};
         udf.initialize(arguments);
 
-        Roaring64Bitmap bitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap1=new Roaring64NavigableMap();
         DeferredObject value1OI=new DeferredJavaObject(RoaringBitmapSerializer.serialize(bitmap1));
 
         DeferredObject[] args={value1OI};
@@ -55,7 +55,7 @@ public class TestRoaringBitmapMinimum {
         ObjectInspector[] arguments={arg1OI};
         udf.initialize(arguments);
 
-        Roaring64Bitmap bitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap1=new Roaring64NavigableMap();
         bitmap1.addRange(3L,6L);
         bitmap1.addRange(-300L,-100L);
 

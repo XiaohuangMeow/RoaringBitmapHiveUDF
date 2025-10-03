@@ -1,14 +1,13 @@
 package roaringbitmap.utils;
 
 import org.apache.hadoop.io.BytesWritable;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.roaringbitmap.longlong.Roaring64NavigableMap;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
-
 public class RoaringBitmapSerializer {
 
-    public static BytesWritable serialize(Roaring64Bitmap bitmap) {
+    public static BytesWritable serialize(Roaring64NavigableMap bitmap) {
         try {
             if (bitmap.serializedSizeInBytes() > Integer.MAX_VALUE - 8) {
                 bitmap.runOptimize();
@@ -16,18 +15,22 @@ public class RoaringBitmapSerializer {
             if (bitmap.serializedSizeInBytes() > Integer.MAX_VALUE - 8) {
                 throw new RuntimeException("Beyond the max number of array elements");
             }
-            byte[] bytes = new byte[(int) bitmap.serializedSizeInBytes()];
-            bitmap.serialize(ByteBuffer.wrap(bytes));
-            return new BytesWritable(bytes);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(bos);
+            bitmap.serialize(dos);
+            dos.close();
+            return new BytesWritable(bos.toByteArray());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static Roaring64Bitmap deserialize(BytesWritable bytes) {
+    public static Roaring64NavigableMap deserialize(BytesWritable bytes) {
         try {
-            Roaring64Bitmap bitmap = new Roaring64Bitmap();
-            bitmap.deserialize(ByteBuffer.wrap(bytes.getBytes()));
+            Roaring64NavigableMap bitmap = new Roaring64NavigableMap();
+            DataInputStream dis=new DataInputStream(new ByteArrayInputStream(bytes.getBytes()));
+            bitmap.deserialize(dis);
+            dis.close();
             return bitmap;
         } catch (IOException e) {
             throw new RuntimeException(e);

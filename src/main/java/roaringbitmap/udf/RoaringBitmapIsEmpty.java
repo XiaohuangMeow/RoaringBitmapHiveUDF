@@ -7,7 +7,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.BinaryObjectInspector;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.BytesWritable;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
@@ -30,7 +29,7 @@ public class RoaringBitmapIsEmpty extends AbstractGenericUDFRoaringBitmapBase{
             return null;
         }
         BytesWritable bytes=((BinaryObjectInspector)this.argumentsOIs[0]).getPrimitiveWritableObject(deferredObjects[0].get());
-        Roaring64Bitmap bitmap= RoaringBitmapSerializer.deserialize(bytes);
+        Roaring64NavigableMap bitmap= RoaringBitmapSerializer.deserialize(bytes);
         return new BooleanWritable(bitmap.isEmpty());
     }
 }

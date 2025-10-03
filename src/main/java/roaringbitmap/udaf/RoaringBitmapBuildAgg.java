@@ -10,7 +10,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectIn
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorUtils;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.io.BytesWritable;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
@@ -48,7 +47,7 @@ public class RoaringBitmapBuildAgg extends AbstractGenericUDAFRoaringBitmapResol
             }
             RoaringBitmapAggBuffer myagg = (RoaringBitmapAggBuffer) aggregationBuffer;
             BytesWritable bytes=PrimitiveObjectInspectorUtils.getBinary(partial,this.internalMergeOI);
-            Roaring64Bitmap partialBitmap= RoaringBitmapSerializer.deserialize(bytes);
+            Roaring64NavigableMap partialBitmap= RoaringBitmapSerializer.deserialize(bytes);
             myagg.bitmap.or(partialBitmap);
         }
 

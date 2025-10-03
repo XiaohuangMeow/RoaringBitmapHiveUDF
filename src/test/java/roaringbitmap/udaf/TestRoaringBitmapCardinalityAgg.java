@@ -9,7 +9,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.junit.Test;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
 import static org.junit.Assert.assertEquals;
@@ -40,8 +40,8 @@ public class TestRoaringBitmapCardinalityAgg {
 
         Object partialResult1=eval1.terminatePartial(buffer1);
         assertNotNull(partialResult1);
-        Roaring64Bitmap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
-        Roaring64Bitmap expectedBitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
+        Roaring64NavigableMap expectedBitmap1=new Roaring64NavigableMap();
         expectedBitmap1.addRange(1L,4L);
         assertEquals(expectedBitmap1,partialBitmap1);
 
@@ -63,8 +63,8 @@ public class TestRoaringBitmapCardinalityAgg {
 
         Object partialResult2=eval2.terminatePartial(buffer2);
         assertNotNull(partialResult2);
-        Roaring64Bitmap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
-        Roaring64Bitmap expectedBitmap2=new Roaring64Bitmap();
+        Roaring64NavigableMap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
+        Roaring64NavigableMap expectedBitmap2=new Roaring64NavigableMap();
         expectedBitmap2.addRange(4L,6L);
         assertEquals(expectedBitmap2,partialBitmap2);
 

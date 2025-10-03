@@ -7,7 +7,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.BinaryObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.LongObjectInspector;
 import org.apache.hadoop.io.BytesWritable;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
@@ -32,14 +31,14 @@ public class RoaringBitmapClear extends AbstractGenericUDFRoaringBitmapBase{
             return null;
         }
         BytesWritable bytes=((BinaryObjectInspector)this.argumentsOIs[0]).getPrimitiveWritableObject(deferredObjects[0].get());
-        Roaring64Bitmap bitmap= RoaringBitmapSerializer.deserialize(bytes);
+        Roaring64NavigableMap bitmap= RoaringBitmapSerializer.deserialize(bytes);
         LongObjectInspector longObjectInspector1=(LongObjectInspector) this.argumentsOIs[1];
         LongObjectInspector longObjectInspector2=(LongObjectInspector) this.argumentsOIs[2];
 
         long start=longObjectInspector1.get(deferredObjects[1].get());
         long end=longObjectInspector2.get(deferredObjects[2].get());
 
-        Roaring64Bitmap range=new Roaring64Bitmap();
+        Roaring64NavigableMap range=new Roaring64NavigableMap();
         range.addRange(start,end);
         bitmap.andNot(range);
 

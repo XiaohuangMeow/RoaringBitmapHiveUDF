@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,16 +60,22 @@ public class TestRoaringBitmapSQL {
         spark.sql("CREATE TEMPORARY FUNCTION rb_xor_cardinality_agg as 'roaringbitmap.udaf.RoaringBitmapXorCardinalityAgg'");
 
         // data
-        List<Row> rowList= Arrays.asList(
-                RowFactory.create(1,new Long[]{1L,2L,3L},new Long[]{3L,4L,5L}),
-                RowFactory.create(2,new Long[]{1L,2L,3L},new Long[]{2L,3L,4L,5L}),
-                RowFactory.create(3,new Long[]{1L,2L,null},new Long[]{3L,4L,5L}),
-                RowFactory.create(4,new Long[]{null},new Long[]{null,null}),
-                RowFactory.create(5,null,null)
-        );
+        List<Row> rowList= new ArrayList<>(Arrays.asList(
+                RowFactory.create(1L,new Long[]{1L,2L,3L},new Long[]{3L,4L,5L}),
+                RowFactory.create(2L,new Long[]{1L,2L,3L},new Long[]{2L,3L,4L,5L}),
+                RowFactory.create(3L,new Long[]{1L,2L,null},new Long[]{3L,4L,5L}),
+                RowFactory.create(4L,new Long[]{null},new Long[]{null,null}),
+                RowFactory.create(5L,null,null)
+        ));
+//        for (long i=0;i<3000000;i++) {
+//            if (i%1000000L==0) System.out.println(i);
+//            rowList.add(
+//                    RowFactory.create(i*5000000000L,new Long[]{1L,2L,3L},new Long[]{3L,4L,5L})
+//                    );
+//        };
 
         StructType schema = new StructType(new StructField[]{
-                new StructField("id", DataTypes.IntegerType,false, Metadata.empty()),
+                new StructField("id", DataTypes.LongType,false, Metadata.empty()),
                 new StructField("array1", DataTypes.createArrayType(DataTypes.LongType),true, Metadata.empty()),
                 new StructField("array2", DataTypes.createArrayType(DataTypes.LongType),true, Metadata.empty()),
         });
@@ -77,7 +84,13 @@ public class TestRoaringBitmapSQL {
         raw_df.createOrReplaceTempView("raw_table");
         // roaringbitmap table
         df=spark.sql( "select id,array1,array2,rb_build(array1) as roaringbitmap1,rb_build(array2) as roaringbitmap2 from raw_table");
+        df.show();
         df.createOrReplaceTempView("table");
+    }
+
+    @Test
+    public void testRoardsadasdsaingBitmapCardinalityAgg() {
+        spark.sql("select rb_cardinality_agg(cast(id as bigint)) from table").show();
     }
 
     @AfterClass
@@ -201,6 +214,11 @@ public class TestRoaringBitmapSQL {
     @Test
     public void testRoaringBitmapBuildAgg() {
         spark.sql("select rb_to_array(rb_build_agg(cast(id as bigint))) from table").show();
+    }
+
+    @Test
+    public void testRoaringBitmapCardinalityAgg() {
+        spark.sql("select rb_cardinality_agg(cast(id as bigint)) from table").show();
     }
 
     @Test

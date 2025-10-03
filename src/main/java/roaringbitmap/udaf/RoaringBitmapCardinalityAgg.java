@@ -11,7 +11,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectIn
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.apache.hive.com.esotericsoftware.minlog.Log;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
@@ -28,7 +28,7 @@ public class RoaringBitmapCardinalityAgg extends AbstractGenericUDAFRoaringBitma
         @Override
         public ObjectInspector init(Mode m, ObjectInspector[] parameters) throws HiveException {
             super.init(m,parameters);
-            if (m==Mode.PARTIAL1||m==Mode.COMPLETE) {
+            if (m==Mode.PARTIAL1||m==Mode.PARTIAL2) {
                 return PrimitiveObjectInspectorFactory.writableBinaryObjectInspector;
             }
             return PrimitiveObjectInspectorFactory.writableLongObjectInspector;
@@ -42,28 +42,20 @@ public class RoaringBitmapCardinalityAgg extends AbstractGenericUDAFRoaringBitma
             }
             RoaringBitmapAggBuffer myagg = (RoaringBitmapAggBuffer) aggregationBuffer;
             long input=PrimitiveObjectInspectorUtils.getLong(p,this.inputOI);
-            if (myagg.is_first_compute) {
-                myagg.is_first_compute=false;
-            }
             myagg.bitmap.addLong(input);
+            myagg.is_first_compute = false;
         }
 
         @Override
-        public void merge(AggregationBuffer aggregationBuffer, Object partial) throws HiveException {
+        public void merge(AggregationBuffer aggregationBuffer, Object partial) {
             if (partial == null) {
                 return;
             }
             RoaringBitmapAggBuffer myagg = (RoaringBitmapAggBuffer) aggregationBuffer;
             BytesWritable bytes=PrimitiveObjectInspectorUtils.getBinary(partial,this.internalMergeOI);
-            Roaring64Bitmap partialBitmap= RoaringBitmapSerializer.deserialize(bytes);
-            if (myagg.is_first_compute) {
-                myagg.bitmap=partialBitmap;
-                myagg.is_first_compute=false;
-            }
-            else {
-                myagg.bitmap.or(partialBitmap);
-            }
-
+            Roaring64NavigableMap partialBitmap= RoaringBitmapSerializer.deserialize(bytes);
+            myagg.bitmap.or(partialBitmap);
+            myagg.is_first_compute = false;
         }
 
         @Override

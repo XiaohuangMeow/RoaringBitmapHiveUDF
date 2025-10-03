@@ -5,7 +5,6 @@ import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.serde2.objectinspector.ListObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
@@ -31,10 +30,10 @@ public class RoaringBitmapBuild extends AbstractGenericUDFRoaringBitmapBase{
         }
         ListObjectInspector listOI=(ListObjectInspector) this.argumentsOIs[0];
         List<Long> arg1=(List<Long>) listOI.getList(deferredObjects[0].get());
-        Roaring64Bitmap bitmap=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap=new Roaring64NavigableMap();
         for (Long element:arg1) {
             if (element==null) continue;
-            bitmap.add(element);
+            bitmap.addLong(element);
         }
         return RoaringBitmapSerializer.serialize(bitmap);
     }

@@ -9,11 +9,15 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <!--        <maven.compiler.source>11</maven.compiler.source>-->
+        <!--        <maven.compiler.target>11</maven.compiler.target>-->
         <spark.version>3.3.0</spark.version>
         <hive.version>3.1.0</hive.version>
         <jackson.version>2.13.0</jackson.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -82,5 +86,44 @@
         </dependency>
 
     </dependencies>
+    <build>
+        <plugins>
+            <!-- 编译器插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
 
+            <!-- 核心：打包插件，用于生成包含所有依赖的 "fat jar" -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <!-- 这个配置会创建一个包含所有依赖的JAR -->
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <!-- 如果你的UDF有主类，可以在这里指定，但对于Hive UDF通常不需要 -->
+                        <!-- <manifest><mainClass>com.yourcompany.YourMainClass</mainClass></manifest> -->
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase> <!-- 绑定到package阶段 -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

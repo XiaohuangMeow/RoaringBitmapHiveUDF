@@ -9,7 +9,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.junit.Test;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
 import static org.junit.Assert.*;
@@ -31,8 +31,8 @@ public class TestRoaringBitmapXorCardinalityAgg {
         eval1.init(GenericUDAFEvaluator.Mode.PARTIAL1,arguments1);
         // partial1
         // test iterate, terminatePartial
-        Roaring64Bitmap bitmap_a1=new Roaring64Bitmap();
-        Roaring64Bitmap bitmap_a2=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap_a1=new Roaring64NavigableMap();
+        Roaring64NavigableMap bitmap_a2=new Roaring64NavigableMap();
         bitmap_a1.addRange(1L,5L);
         bitmap_a2.addRange(2L,6L);
 
@@ -44,8 +44,8 @@ public class TestRoaringBitmapXorCardinalityAgg {
 
         Object partialResult1=eval1.terminatePartial(buffer1);
         assertNotNull(partialResult1);
-        Roaring64Bitmap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
-        Roaring64Bitmap expectedBitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
+        Roaring64NavigableMap expectedBitmap1=new Roaring64NavigableMap();
         expectedBitmap1.addLong(1L);
         expectedBitmap1.addLong(5L);
         assertEquals(expectedBitmap1,partialBitmap1);
@@ -62,8 +62,8 @@ public class TestRoaringBitmapXorCardinalityAgg {
 
         // partial2
         // test iterate, terminatePartial
-        Roaring64Bitmap bitmap_b1=new Roaring64Bitmap();
-        Roaring64Bitmap bitmap_b2=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap_b1=new Roaring64NavigableMap();
+        Roaring64NavigableMap bitmap_b2=new Roaring64NavigableMap();
         bitmap_b1.addRange(10L,15L);
         bitmap_b2.addRange(15L,20L);
 
@@ -75,8 +75,8 @@ public class TestRoaringBitmapXorCardinalityAgg {
 
         Object partialResult2=eval2.terminatePartial(buffer2);
         assertNotNull(partialResult2);
-        Roaring64Bitmap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
-        Roaring64Bitmap expectedBitmap2=new Roaring64Bitmap();
+        Roaring64NavigableMap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
+        Roaring64NavigableMap expectedBitmap2=new Roaring64NavigableMap();
         expectedBitmap2.addRange(10L,20L);
         assertEquals(expectedBitmap2,partialBitmap2);
 
@@ -117,8 +117,8 @@ public class TestRoaringBitmapXorCardinalityAgg {
         eval1.init(GenericUDAFEvaluator.Mode.PARTIAL1,arguments1);
         // partial1
         // test iterate, terminatePartial
-        Roaring64Bitmap bitmap_a1=new Roaring64Bitmap();
-        Roaring64Bitmap bitmap_a2=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap_a1=new Roaring64NavigableMap();
+        Roaring64NavigableMap bitmap_a2=new Roaring64NavigableMap();
 
         BytesWritable input_a1= RoaringBitmapSerializer.serialize(bitmap_a1);
         BytesWritable input_a2= RoaringBitmapSerializer.serialize(bitmap_a2);
@@ -128,7 +128,7 @@ public class TestRoaringBitmapXorCardinalityAgg {
 
         Object partialResult1=eval1.terminatePartial(buffer1);
         assertNotNull(partialResult1);
-        Roaring64Bitmap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
+        Roaring64NavigableMap partialBitmap1= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult1);
         assertTrue(partialBitmap1.isEmpty());
 
         // part2
@@ -148,7 +148,7 @@ public class TestRoaringBitmapXorCardinalityAgg {
 
         Object partialResult2=eval2.terminatePartial(buffer2);
         assertNotNull(partialResult2);
-        Roaring64Bitmap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
+        Roaring64NavigableMap partialBitmap2= RoaringBitmapSerializer.deserialize((BytesWritable)partialResult2);
         assertTrue(partialBitmap2.isEmpty());
 
         // test merge, terminate

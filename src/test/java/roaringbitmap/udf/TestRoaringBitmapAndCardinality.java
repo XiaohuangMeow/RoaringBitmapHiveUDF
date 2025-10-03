@@ -7,7 +7,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.io.LongWritable;
 import org.junit.Test;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class TestRoaringBitmapAndCardinality {
         ObjectInspector[] arguments={arg1OI,arg2OI};
         udf.initialize(arguments);
 
-        Roaring64Bitmap bitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap1=new Roaring64NavigableMap();
         bitmap1.addRange(1L,3L);
 
         DeferredObject value1OI=new DeferredJavaObject(RoaringBitmapSerializer.serialize(bitmap1));
@@ -43,9 +43,9 @@ public class TestRoaringBitmapAndCardinality {
         ObjectInspector[] arguments={arg1OI,arg2OI};
         udf.initialize(arguments);
 
-        Roaring64Bitmap bitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap1=new Roaring64NavigableMap();
         bitmap1.addRange(1L,3L);
-        Roaring64Bitmap bitmap2=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap2=new Roaring64NavigableMap();
         bitmap2.addRange(2L,5L);
 
 

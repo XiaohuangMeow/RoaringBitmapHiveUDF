@@ -8,7 +8,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectIn
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.junit.Test;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
+import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +26,7 @@ public class TestRoaringBitmapFill {
         ObjectInspector[] arguments={arg1OI,arg2OI,arg3OI};
         udf.initialize(arguments);
 
-        Roaring64Bitmap bitmap=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap=new Roaring64NavigableMap();
         bitmap.addRange(1L,3L);
 
         DeferredObject value1OI=new DeferredJavaObject(RoaringBitmapSerializer.serialize(bitmap));
@@ -49,7 +49,7 @@ public class TestRoaringBitmapFill {
         ObjectInspector[] arguments={arg1OI,arg2OI,arg3OI};
         udf.initialize(arguments);
 
-        Roaring64Bitmap bitmap1=new Roaring64Bitmap();
+        Roaring64NavigableMap bitmap1=new Roaring64NavigableMap();
         bitmap1.addRange(1L,3L);
 
 
@@ -59,8 +59,8 @@ public class TestRoaringBitmapFill {
 
         DeferredObject[] args={value1OI,value2OI,value3OI};
         BytesWritable output=(BytesWritable) udf.evaluate(args);
-        Roaring64Bitmap outputBitmap= RoaringBitmapSerializer.deserialize(output);
-        Roaring64Bitmap expectedBitmap=new Roaring64Bitmap();
+        Roaring64NavigableMap outputBitmap= RoaringBitmapSerializer.deserialize(output);
+        Roaring64NavigableMap expectedBitmap=new Roaring64NavigableMap();
         expectedBitmap.addRange(1L,7L);
 
         assertEquals(expectedBitmap,outputBitmap);

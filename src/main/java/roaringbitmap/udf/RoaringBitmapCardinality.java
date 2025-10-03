@@ -7,7 +7,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.BinaryObjectInspector;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
@@ -30,8 +29,7 @@ public class RoaringBitmapCardinality extends AbstractGenericUDFRoaringBitmapBas
             return null;
         }
         BytesWritable bytes1=((BinaryObjectInspector)this.argumentsOIs[0]).getPrimitiveWritableObject(deferredObjects[0].get());
-        Roaring64Bitmap bitmap= RoaringBitmapSerializer.deserialize(bytes1);
-
+        Roaring64NavigableMap bitmap= RoaringBitmapSerializer.deserialize(bytes1);
         return new LongWritable(bitmap.getLongCardinality());
     }
 }

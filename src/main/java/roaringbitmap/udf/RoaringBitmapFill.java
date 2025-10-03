@@ -7,7 +7,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.BinaryObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.LongObjectInspector;
 import org.apache.hadoop.io.BytesWritable;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
@@ -33,14 +32,32 @@ public class RoaringBitmapFill extends AbstractGenericUDFRoaringBitmapBase{
         }
 
         BytesWritable bytes=((BinaryObjectInspector)this.argumentsOIs[0]).getPrimitiveWritableObject(deferredObjects[0].get());
-        Roaring64Bitmap bitmap= RoaringBitmapSerializer.deserialize(bytes);
+        Roaring64NavigableMap bitmap= RoaringBitmapSerializer.deserialize(bytes);
         LongObjectInspector longObjectInspector1=(LongObjectInspector)this.argumentsOIs[1];
         LongObjectInspector longObjectInspector2=(LongObjectInspector)this.argumentsOIs[2];
 
         long start = longObjectInspector1.get(deferredObjects[1].get());
         long end = longObjectInspector2.get(deferredObjects[2].get());
-        Roaring64Bitmap range=new Roaring64Bitmap();
-        range.addRange(start,end);
+        if (start>=end) {
+            throw new UDFArgumentException("Invalid range, start must be less than end.");
+        }
+        Roaring64NavigableMap range=new Roaring64NavigableMap();
+        // start>=0
+        // deduce end>0
+        if (start>=0L) {
+            range.addRange(start,end);
+        }
+        // start<0
+        // end=0
+        else if (end==0L){
+            range.addRange(start,-1L);
+            range.addLong(-1L);
+        }
+        // start<0
+        // end<0
+        else {
+            range.addRange(start,end);
+        }
         range.or(bitmap);
         return RoaringBitmapSerializer.serialize(range);
     }

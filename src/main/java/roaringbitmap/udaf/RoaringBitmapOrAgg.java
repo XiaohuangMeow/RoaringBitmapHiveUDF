@@ -10,7 +10,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectIn
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorUtils;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 import org.apache.hadoop.io.BytesWritable;
-import org.roaringbitmap.longlong.Roaring64Bitmap;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 import roaringbitmap.utils.RoaringBitmapSerializer;
 
@@ -37,14 +36,9 @@ public class RoaringBitmapOrAgg extends AbstractGenericUDAFRoaringBitmapResolver
                 return;
             }
             RoaringBitmapAggBuffer myagg = (RoaringBitmapAggBuffer) aggregationBuffer;
-            Roaring64Bitmap inputBitmap= RoaringBitmapSerializer.deserialize(PrimitiveObjectInspectorUtils.getBinary(p,this.inputOI));
-            if (myagg.is_first_compute) {
-                myagg.bitmap=inputBitmap;
-                myagg.is_first_compute=false;
-            }
-            else {
-                myagg.bitmap.or(inputBitmap);
-            }
+            Roaring64NavigableMap inputBitmap= RoaringBitmapSerializer.deserialize(PrimitiveObjectInspectorUtils.getBinary(p,this.inputOI));
+            myagg.bitmap.or(inputBitmap);
+            myagg.is_first_compute = false;
         }
 
         @Override
@@ -54,15 +48,9 @@ public class RoaringBitmapOrAgg extends AbstractGenericUDAFRoaringBitmapResolver
             }
             RoaringBitmapAggBuffer myagg = (RoaringBitmapAggBuffer) aggregationBuffer;
             BytesWritable bytes=PrimitiveObjectInspectorUtils.getBinary(partial,this.internalMergeOI);
-            Roaring64Bitmap partialBitmap= RoaringBitmapSerializer.deserialize(bytes);
-            if (myagg.is_first_compute) {
-                myagg.bitmap=partialBitmap;
-                myagg.is_first_compute=false;
-            }
-            else {
-                myagg.bitmap.or(partialBitmap);
-            }
-
+            Roaring64NavigableMap partialBitmap= RoaringBitmapSerializer.deserialize(bytes);
+            myagg.bitmap.or(partialBitmap);
+            myagg.is_first_compute = false;
         }
 
         @Override
