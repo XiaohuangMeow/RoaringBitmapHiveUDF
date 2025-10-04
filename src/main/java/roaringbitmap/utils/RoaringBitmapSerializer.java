@@ -4,12 +4,12 @@ import org.apache.hadoop.io.BytesWritable;
 import org.roaringbitmap.longlong.Roaring64NavigableMap;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 public class RoaringBitmapSerializer {
 
     public static BytesWritable serialize(Roaring64NavigableMap bitmap) {
         try {
-            if (bitmap.serializedSizeInBytes() > Integer.MAX_VALUE - 8) {
+            // Heuristic Value: Integer.MAX_VALUE / 3
+            if (bitmap.serializedSizeInBytes() > Integer.MAX_VALUE / 3) {
                 bitmap.runOptimize();
             }
             if (bitmap.serializedSizeInBytes() > Integer.MAX_VALUE - 8) {

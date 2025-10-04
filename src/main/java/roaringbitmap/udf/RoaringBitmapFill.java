@@ -58,7 +58,7 @@ public class RoaringBitmapFill extends AbstractGenericUDFRoaringBitmapBase{
         else {
             range.addRange(start,end);
         }
-        range.or(bitmap);
-        return RoaringBitmapSerializer.serialize(range);
+        bitmap.or(range);
+        return RoaringBitmapSerializer.serialize(bitmap);
     }
 }
