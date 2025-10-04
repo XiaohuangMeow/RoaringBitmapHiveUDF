@@ -162,6 +162,7 @@ CREATE TEMPORARY FUNCTION rb_xor_cardinality_agg as 'roaringbitmap.udaf.RoaringB
 ## 1. Sample Data
 Assume a user_page_viewstable storing page IDs visited by users.
 > 假设有一张 user_page_views表，存储用户访问的页面ID。
+
 | user_id   | page_id | 
 | :---:     | :----:  |
 | 1         | 1001    |
