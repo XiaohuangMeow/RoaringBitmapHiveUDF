@@ -316,6 +316,20 @@ GROUP BY category;
 
 
 ## UDF
+As mentioned previously, explicit type casting is highly recommended when using the rb_build UDF function in some Hive/Spark version.
+> 如之前所提及，强烈推荐用rb_build时进行显式类型转化。 
+```sql
+-- Might cause errors in some versions.
+SELECT rb_cardinality(rb_build(ARRAY(1L, 2L, 3L))) AS rb;
+
+-- Recommend
+SELECT rb_cardinality(rb_build(CAST(ARRAY(1L, 2L, 3L) AS ARRAY<BIGINT>))) AS rb;
+```
+However, for the sake of code simplicity and readability, we have chosen to forgo the explicit type casting that is often recommended in the following examples.
+> 然而，为了代码的简洁性和可读性，我们可能会省略在以下示例中通常建议的显式类型转换。
+
+
+
 ### rb_and
 Computes the intersection (bitwise AND) of two RoaringBitmaps.  
 ```sql
